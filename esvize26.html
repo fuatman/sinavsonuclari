@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endüstri Sosyolojisi Ara Sınav (Vize) Sonuç Analizi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            DEFAULT: '#1E3A5F',
+                            light: '#2B5284',
+                            dark: '#152A45',
+                        },
+                        teal: {
+                            DEFAULT: '#0D9488',
+                            light: '#14B8A6',
+                            dark: '#0F766E',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #1E293B;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Özel Range Slider Tasarımı */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #E2E8F0;
+            height: 0.5rem;
+            border-radius: 9999px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -6px;
+            background-color: #0D9488;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 9999px;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 2px 6px rgba(13, 148, 136, 0.4);
+            transition: transform 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.15);
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: #E2E8F0;
+            height: 0.5rem;
+            border-radius: 9999px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            background-color: #0D9488;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 9999px;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 2px 6px rgba(13, 148, 136, 0.4);
+        }
+
+        /* Gizli scrollbar for mobile horizontal tabs if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal/20 selection:text-navy pb-12">
+
+    <!-- Ana Konteyner (Mobil Öncelikli Tek Sütun) -->
+    <main class="max-w-2xl mx-auto px-4 pt-5 sm:pt-8 space-y-6">
+
+        <!-- 1. Üst Başlık Kartı -->
+        <header class="bg-gradient-to-br from-navy to-navy-dark text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
+            <!-- Dekoratif arka plan dairesi -->
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-teal/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full blur-xl pointer-events-none"></div>
+
+            <div class="relative z-10">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-teal-light text-xs font-semibold tracking-wider uppercase mb-3 border border-white/10">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-light animate-pulse"></span>
+                    DERS DEĞERLENDİRME RAPORU
+                </div>
+                <h1 class="text-xl sm:text-2xl font-bold leading-snug tracking-tight text-white mb-2">
+                    Endüstri Sosyolojisi Ara Sınav (Vize) Sonuç Analizi
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-300 font-medium">
+                    Sınava Katılan Öğrenciler (N = 74) <span class="mx-1.5 text-slate-500">|</span> 0–100 Ölçeği <span class="mx-1.5 text-slate-500">|</span> Anonim Sınıf Özeti
+                </p>
+                <div class="mt-4 pt-3 border-t border-white/10 flex items-start gap-2 text-xs text-slate-300/90">
+                    <svg class="w-4 h-4 text-teal-light shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Kayıtlı 78 öğrenciden sınava katılmadığı için 0 puan işlenen 4 öğrenci analiz dışı bırakılmıştır.</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. Etkileşimli Bileşen: Kendi Notunu Sorgula -->
+        <section aria-labelledby="score-checker-title" class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
+            <div class="flex items-center justify-between gap-2 mb-4">
+                <div>
+                    <h2 id="score-checker-title" class="text-base sm:text-lg font-bold text-navy flex items-center gap-2">
+                        <svg class="w-5 h-5 text-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Sınıf İçindeki Yerini Gör
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Vize notunu yaz veya kaydırıcıyı hareket ettir</p>
+                </div>
+                <!-- Sayısal Giriş Kutusu -->
+                <div class="flex items-center bg-slate-50 border-2 border-teal/40 focus-within:border-teal rounded-xl px-3 py-1.5 shadow-inner">
+                    <label for="score-input" class="sr-only">Vize Notunuz</label>
+                    <input type="number" id="score-input" min="1" max="100" value="45" 
+                           class="w-14 text-center text-xl font-extrabold text-navy bg-transparent focus:outline-none">
+                    <span class="text-xs font-semibold text-slate-400 ml-1">/100</span>
+                </div>
+            </div>
+
+            <!-- Kaydırıcı (Slider) -->
+            <div class="mb-5">
+                <input type="range" id="score-slider" min="1" max="100" value="45" class="w-full">
+                <div class="flex justify-between text-[11px] font-medium text-slate-400 mt-1 px-0.5">
+                    <span>1</span>
+                    <span>Ort: 36,92</span>
+                    <span>50</span>
+                    <span>75</span>
+                    <span>100</span>
+                </div>
+            </div>
+
+            <!-- Dinamik Sonuç Kartları (3 Sütun) -->
+            <div class="grid grid-cols-3 gap-2.5 mb-4">
+                <div class="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+                    <div class="text-[11px] font-medium text-slate-500 mb-1">Ortalamaya Fark</div>
+                    <div id="res-diff" class="text-base sm:text-lg font-extrabold text-teal">+8,08</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">Ort: 36,92</div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+                    <div class="text-[11px] font-medium text-slate-500 mb-1">Yüzdelik Dilim</div>
+                    <div id="res-percentile" class="text-base sm:text-lg font-extrabold text-navy">%62,2</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">Geride bırakılan</div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
+                    <div class="text-[11px] font-medium text-slate-500 mb-1">Yaklaşık Sıra</div>
+                    <div id="res-rank" class="text-base sm:text-lg font-extrabold text-navy">28 / 74</div>
+                    <div class="text-[10px] text-slate-400 mt-0.5">74 kişi içinde</div>
+                </div>
+            </div>
+
+            <!-- Bant Rozeti ve Yapıcı Geri Bildirim -->
+            <div id="res-feedback-box" class="rounded-xl p-3.5 bg-teal/10 border border-teal/20 transition-colors duration-200">
+                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                    <span id="res-band-badge" class="inline-block px-2.5 py-0.5 rounded-md text-xs font-bold bg-teal text-white">
+                        Sınıfın Ana Gövdesi (23–51 Puan — Ortadaki %50)
+                    </span>
+                    <span id="res-expectation-tag" class="inline-block px-2 py-0.5 rounded-md text-[11px] font-medium bg-white/80 text-slate-600 border border-slate-200/60">
+                        Genel Beklenti Bandı İçinde
+                    </span>
+                </div>
+                <p id="res-feedback-text" class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    Sınıf ortalamasının üzerinde ve tipik orta gövdedesin. Finalde düzenli bir çalışmayla rahatlıkla üst dilime çıkabilirsin.
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. Özet İstatistik Kartları (2x2 Mobil Grid + Ek Şerit) -->
+        <section aria-labelledby="summary-stats-title">
+            <h2 id="summary-stats-title" class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3 px-1">
+                Genel İstatistik Özeti (N = 74)
+            </h2>
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Kart 1: Aritmetik Ortalama -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-slate-500">Aritmetik Ortalama</span>
+                        <span class="p-1.5 rounded-lg bg-navy/10 text-navy">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        </span>
+                    </div>
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-navy">36,92</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Sınava giren 74 kişi</div>
+                    </div>
+                </div>
+
+                <!-- Kart 2: Medyan -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-slate-500">Medyan (Ortanca)</span>
+                        <span class="p-1.5 rounded-lg bg-teal/10 text-teal">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        </span>
+                    </div>
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-teal">37,00</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Sınıfın yarısı 37 ve üzeri</div>
+                    </div>
+                </div>
+
+                <!-- Kart 3: Standart Sapma -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-slate-500">Standart Sapma</span>
+                        <span class="p-1.5 rounded-lg bg-amber-500/10 text-amber-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </span>
+                    </div>
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-slate-800">18,66</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Geniş yayılım / ayrışma</div>
+                    </div>
+                </div>
+
+                <!-- Kart 4: Ana Gövde (IQR) -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-slate-500">Ana Gövde (IQR)</span>
+                        <span class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </span>
+                    </div>
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-navy">23 – 51</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Ortadaki %50'lik dilim</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ek Metrik Şeridi -->
+            <div class="mt-3 bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200/80 grid grid-cols-3 divide-x divide-slate-100 text-center">
+                <div class="px-2">
+                    <div class="text-[11px] font-medium text-slate-500">En Düşük Not</div>
+                    <div class="text-base font-bold text-rose-600 mt-0.5">5</div>
+                </div>
+                <div class="px-2">
+                    <div class="text-[11px] font-medium text-slate-500">En Yüksek Not</div>
+                    <div class="text-base font-bold text-emerald-600 mt-0.5">85</div>
+                </div>
+                <div class="px-2">
+                    <div class="text-[11px] font-medium text-slate-500">50+ Alanlar</div>
+                    <div class="text-base font-bold text-navy mt-0.5">24 kişi <span class="text-xs font-normal text-slate-500">(%32,4)</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Etkileşimli Not Dağılımı Grafiği ve Tablosu -->
+        <section aria-labelledby="chart-section-title" class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <div>
+                    <h2 id="chart-section-title" class="text-base sm:text-lg font-bold text-navy">
+                        Puan Aralıklarına Göre Dağılım
+                    </h2>
+                    <p class="text-xs text-slate-500">Girdiğiniz notun bulunduğu aralık grafikte vurgulanır</p>
+                </div>
+                <span id="chart-highlight-pill" class="self-start sm:self-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-teal/10 text-teal-dark">
+                    <span class="w-2 h-2 rounded-full bg-teal"></span>
+                    Senin Aralığın: 40–49
+                </span>
+            </div>
+
+            <!-- Responsive Chart Canvas -->
+            <div class="relative w-full h-60 sm:h-64 mb-5">
+                <canvas id="distributionChart"></canvas>
+            </div>
+
+            <!-- Kompakt Dağılım Tablosu -->
+            <div class="overflow-hidden rounded-xl border border-slate-200/80 mb-5">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 border-b border-slate-200/80">
+                            <th class="py-2.5 px-3 font-semibold">Puan Aralığı</th>
+                            <th class="py-2.5 px-3 font-semibold text-center">Öğrenci</th>
+                            <th class="py-2.5 px-3 font-semibold text-right">Oran</th>
+                        </tr>
+                    </thead>
+                    <tbody id="distribution-table-body" class="divide-y divide-slate-100">
+                        <!-- JS ile doldurulacak ve vurgulanacak -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mod Listesi (En Sık Tekrar Eden Notlar) -->
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/60">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-navy mb-2.5 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                    En Sık Tekrar Eden Notlar (Mod Listesi)
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy text-white text-xs font-bold shadow-xs">
+                        10 Puan <span class="px-1.5 py-0.2 bg-white/20 rounded text-[11px] font-medium">6 kişi (Mod)</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold">
+                        15, 33, 50 Puan <span class="text-teal-dark font-bold">(4'er kişi)</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-xs font-semibold">
+                        23, 25, 31, 37, 51 Puan <span class="text-slate-500 font-medium">(3'er kişi)</span>
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Sekmeli (Tab) Detay Bölümleri -->
+        <section aria-labelledby="details-tabs-title" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <h2 id="details-tabs-title" class="sr-only">Detaylı Analiz Sekmeleri</h2>
+            
+            <!-- Sekme Butonları (Touch Friendly) -->
+            <div role="tablist" class="grid grid-cols-3 bg-slate-100/80 p-1.5 gap-1 border-b border-slate-200/80">
+                <button role="tab" aria-selected="true" data-tab="tab-ranks" 
+                        class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold text-navy bg-white shadow-xs transition-all">
+                    Üst & Alt Dilim
+                </button>
+                <button role="tab" aria-selected="false" data-tab="tab-groups" 
+                        class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-navy transition-all">
+                    Grup Analizi
+                </button>
+                <button role="tab" aria-selected="false" data-tab="tab-guide" 
+                        class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-navy transition-all">
+                    Not Okuma Rehberi
+                </button>
+            </div>
+
+            <!-- Sekme İçerikleri -->
+            <div class="p-5 sm:p-6">
+                
+                <!-- SEKME 1: Üst ve Alt Başarı Dilimleri (Anonim) -->
+                <div id="tab-ranks" class="tab-panel space-y-5">
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Kişisel verilerin korunması amacıyla öğrenci isim ve numaralarına yer verilmemiş; eşitlikler dahil edilerek anonim puan sıralaması sunulmuştur.
+                    </p>
+
+                    <!-- En Başarılı İlk 10 -->
+                    <div class="rounded-xl border border-emerald-200/80 bg-emerald-50/30 overflow-hidden">
+                        <div class="bg-emerald-600/10 px-4 py-2.5 border-b border-emerald-200/60 flex items-center justify-between">
+                            <h3 class="text-xs sm:text-sm font-bold text-emerald-900">En Başarılı İlk 10 (57+ Puan)</h3>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white">11 Öğrenci</span>
+                        </div>
+                        <ul class="divide-y divide-emerald-100 text-xs sm:text-sm px-4">
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">1. Sıra</span><span class="font-bold text-emerald-700">85 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">2. Sıra</span><span class="font-bold text-emerald-700">71 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">3. Sıra</span><span class="font-bold text-emerald-700">70 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">4. Sıra</span><span class="font-bold text-emerald-700">67 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">5. Sıra</span><span class="font-bold text-emerald-700">66 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">6. Sıra (Eşitlik)</span><span class="font-bold text-emerald-700">65 puan <span class="text-xs font-normal text-slate-500">(2 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">8. Sıra</span><span class="font-bold text-emerald-700">62 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">9. Sıra</span><span class="font-bold text-emerald-700">58 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">10. Sıra (Eşitlik)</span><span class="font-bold text-emerald-700">57 puan <span class="text-xs font-normal text-slate-500">(2 kişi)</span></span></li>
+                        </ul>
+                    </div>
+
+                    <!-- En Düşük Puanlı Son 10 -->
+                    <div class="rounded-xl border border-rose-200/80 bg-rose-50/30 overflow-hidden">
+                        <div class="bg-rose-600/10 px-4 py-2.5 border-b border-rose-200/60 flex items-center justify-between">
+                            <h3 class="text-xs sm:text-sm font-bold text-rose-900">En Düşük Puanlı Son 10 (15 ve Altı)</h3>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white">13 Öğrenci</span>
+                        </div>
+                        <ul class="divide-y divide-rose-100 text-xs sm:text-sm px-4">
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">En Düşük Puan</span><span class="font-bold text-rose-700">5 puan <span class="text-xs font-normal text-slate-500">(2 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">10 Puan Alanlar</span><span class="font-bold text-rose-700">10 puan <span class="text-xs font-normal text-slate-500">(6 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">11 Puan Alan</span><span class="font-bold text-rose-700">11 puan <span class="text-xs font-normal text-slate-500">(1 kişi)</span></span></li>
+                            <li class="py-2 flex justify-between items-center"><span class="font-semibold text-slate-700">15 Puan Alanlar</span><span class="font-bold text-rose-700">15 puan <span class="text-xs font-normal text-slate-500">(4 kişi)</span></span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SEKME 2: Grup Bazlı Karşılaştırmalar -->
+                <div id="tab-groups" class="tab-panel hidden space-y-6">
+                    <!-- Cinsiyet Dağılımı -->
+                    <div>
+                        <h3 class="text-sm font-bold text-navy mb-2.5 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-teal"></span>
+                            Cinsiyet Dağılımı (Anonim)
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200/80">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                                        <th class="py-2.5 px-3 font-semibold">Grup</th>
+                                        <th class="py-2.5 px-2 font-semibold text-center">Kişi</th>
+                                        <th class="py-2.5 px-2 font-semibold text-center">Ort.</th>
+                                        <th class="py-2.5 px-2 font-semibold text-center">Medyan</th>
+                                        <th class="py-2.5 px-3 font-semibold text-right">Min–Max</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="py-2.5 px-3 font-bold text-navy">Kadın</td>
+                                        <td class="py-2.5 px-2 text-center text-slate-600">60</td>
+                                        <td class="py-2.5 px-2 text-center font-bold text-teal-dark">38,42</td>
+                                        <td class="py-2.5 px-2 text-center text-slate-700">38,00</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-500">5 – 85</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 font-bold text-navy">Erkek</td>
+                                        <td class="py-2.5 px-2 text-center text-slate-600">10</td>
+                                        <td class="py-2.5 px-2 text-center font-bold text-slate-700">28,30</td>
+                                        <td class="py-2.5 px-2 text-center text-slate-700">27,50</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-500">10 – 51</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 font-semibold text-slate-600">Üniseks İsimler*</td>
+                                        <td class="py-2.5 px-2 text-center text-slate-600">4</td>
+                                        <td class="py-2.5 px-2 text-center font-bold text-slate-700">36,00</td>
+                                        <td class="py-2.5 px-2 text-center text-slate-700">37,50</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-500">17 – 52</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">
+                            *Üniseks isimler en yaygın kullanımlarına göre dağıtıldığında kadın ortalaması <strong>38,39</strong>, erkek ortalaması <strong>29,33</strong> olmaktadır.
+                        </p>
+                    </div>
+
+                    <!-- Giriş Yılına Göre Başarı -->
+                    <div>
+                        <h3 class="text-sm font-bold text-navy mb-2.5 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-navy"></span>
+                            Giriş Yılına (Döneme) Göre Başarı
+                        </h3>
+                        <div class="space-y-2.5">
+                            <div class="p-3 rounded-xl bg-teal/5 border border-teal/20 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-navy">2024 Girişliler (Normal Dönem)</div>
+                                    <div class="text-[11px] text-slate-500">47 öğrenci • Sınıf lokomotifi (+5 puan fark)</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-extrabold text-teal-dark">41,96 Ort.</div>
+                                    <div class="text-[11px] text-slate-500">Medyan: 44,00</div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-700">2025 Girişliler</div>
+                                    <div class="text-[11px] text-slate-500">7 öğrenci • Ortalamaya paralel seyir</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-extrabold text-navy">36,71 Ort.</div>
+                                    <div class="text-[11px] text-slate-500">Medyan: 33,00</div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-700">2023 Girişliler (Üst Dönem)</div>
+                                    <div class="text-[11px] text-slate-500">12 öğrenci • Dersi alttan alan grup</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-extrabold text-slate-700">25,25 Ort.</div>
+                                    <div class="text-[11px] text-slate-500">Medyan: 21,50</div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-700">2022 ve Öncesi Girişliler</div>
+                                    <div class="text-[11px] text-slate-500">6 öğrenci • Eski dönem kayıtları</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-extrabold text-slate-700">19,67 Ort.</div>
+                                    <div class="text-[11px] text-slate-500">Medyan: 16,00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEKME 3: Notunu Nasıl Okumalısın? -->
+                <div id="tab-guide" class="tab-panel hidden space-y-4">
+                    <div class="p-4 rounded-xl bg-navy/5 border border-navy/10">
+                        <h3 class="text-sm font-bold text-navy mb-1.5">Standart Sapma (18,66) Ne Anlama Geliyor?</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Standart sapmanın <strong>18,66</strong> çıkması, notların sınıf ortalaması (36,92) etrafında tek bir noktada toplanmadığını; dersi kavrayan öğrencilerle eksik kalan öğrenciler arasında belirgin bir ayrışma oluştuğunu gösterir. Bu durum sınav sorularının ayırt ediciliğinin yüksek olduğunu ifade eder.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-teal/5 border border-teal/20">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <h3 class="text-sm font-bold text-teal-dark">1. Sınıfın Ana Gövdesi (IQR)</h3>
+                            <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-teal text-white">23 – 51 Puan</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Sınava giren 74 öğrencinin <strong>39'u (%52,7)</strong> bu aralıktadır. Uçlardaki çok yüksek ve çok düşük notlar dışarıda bırakıldığında sınıfın tipik orta gövdesini temsil eder. <strong>51 puanın üzeri</strong> en başarılı %25'lik üst çeyrektir.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <h3 class="text-sm font-bold text-navy">2. Genel Beklenti Bandı (±1 SD)</h3>
+                            <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-navy text-white">18,26 – 55,58 Puan</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Sınıfın <strong>%62,2'si (46 öğrenci)</strong> ortalamanın bir standart sapma altı ve üstü arasındaki bu geniş banttadır. <strong>56 puan ve üzeri</strong> alan 14 öğrenci bağıl değerlendirme (çan eğrisi) açısından avantajlı üst dilime yerleşmiştir; <strong>18 puanın altı</strong> (14 öğrenci) ise finalde telafi gerektirir.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Alt Bilgi (Footer) -->
+        <footer class="text-center text-[11px] text-slate-400 pt-2 pb-4">
+            Endüstri Sosyolojisi Dersi • Anonimleştirilmiş Ara Sınav İstatistik Özeti (N = 74)
+        </footer>
+
+    </main>
+
+    <!-- Etkileşim ve Grafik Mantığı -->
+    <script>
+        // 1. Gömülü Gerçek 74 Öğrenci Notu Dizisi (Küçükten Büyüğe Sıralı)
+        const scoresData = [
+            5, 5, 10, 10, 10, 10, 10, 10, 11, 15, 15, 15, 15, 17, 17, 20, 21, 22, 
+            23, 23, 23, 24, 25, 25, 25, 26, 29, 30, 31, 31, 31, 33, 33, 33, 33, 34, 
+            37, 37, 37, 38, 38, 40, 41, 41, 43, 44, 45, 46, 48, 49, 50, 50, 50, 50, 
+            51, 51, 51, 52, 52, 53, 53, 56, 56, 57, 57, 58, 62, 65, 65, 66, 67, 70, 71, 85
+        ];
+
+        const CLASS_MEAN = 36.92;
+        const TOTAL_STUDENTS = scoresData.length; // 74
+
+        // Puan Aralıkları Verisi
+        const brackets = [
+            { label: '1 - 19', min: 1, max: 19, count: 15, pct: '%20,3' },
+            { label: '20 - 39', min: 20, max: 39, count: 26, pct: '%35,1' },
+            { label: '40 - 49', min: 40, max: 49, count: 9, pct: '%12,2' },
+            { label: '50 - 59', min: 50, max: 59, count: 16, pct: '%21,6' },
+            { label: '60 - 69', min: 60, max: 69, count: 5, pct: '%6,8' },
+            { label: '70 - 79', min: 70, max: 79, count: 2, pct: '%2,7' },
+            { label: '80 - 100', min: 80, max: 100, count: 1, pct: '%1,4' }
+        ];
+
+        // DOM Elemanları
+        const scoreInput = document.getElementById('score-input');
+        const scoreSlider = document.getElementById('score-slider');
+        const resDiff = document.getElementById('res-diff');
+        const resPercentile = document.getElementById('res-percentile');
+        const resRank = document.getElementById('res-rank');
+        const resFeedbackBox = document.getElementById('res-feedback-box');
+        const resBandBadge = document.getElementById('res-band-badge');
+        const resExpectationTag = document.getElementById('res-expectation-tag');
+        const resFeedbackText = document.getElementById('res-feedback-text');
+        const chartHighlightPill = document.getElementById('chart-highlight-pill');
+        const tableBody = document.getElementById('distribution-table-body');
+
+        // Chart.js Kurulumu
+        let distributionChart;
+
+        function initChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: brackets.map(b => b.label),
+                    datasets: [{
+                        label: 'Öğrenci Sayısı',
+                        data: brackets.map(b => b.count),
+                        backgroundColor: brackets.map((_, i) => i === 2 ? '#0D9488' : '#CBD5E1'),
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        barPercentage: 0.68
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1E3A5F',
+                            titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                            bodyFont: { family: 'Inter', size: 12 },
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const idx = context.dataIndex;
+                                    return ` ${context.raw} öğrenci (${brackets[idx].pct})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 30,
+                            ticks: {
+                                stepSize: 5,
+                                font: { family: 'Inter', size: 11 },
+                                color: '#64748B'
+                            },
+                            grid: {
+                                color: '#F1F5F9',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { family: 'Inter', size: 11, weight: '600' },
+                                color: '#334155'
+                            },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Tabloyu Oluştur ve Güncelle
+        function renderTable(activeBracketIndex) {
+            tableBody.innerHTML = brackets.map((b, idx) => {
+                const isHighlighted = idx === activeBracketIndex;
+                return `
+                    <tr class="${isHighlighted ? 'bg-teal/10 font-bold text-navy' : 'text-slate-700 hover:bg-slate-50/80'} transition-colors">
+                        <td class="py-2.5 px-3 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full ${isHighlighted ? 'bg-teal' : 'bg-slate-300'}"></span>
+                            ${b.label} Puan
+                            ${isHighlighted ? '<span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-teal text-white ml-1">Sen</span>' : ''}
+                        </td>
+                        <td class="py-2.5 px-3 text-center">${b.count} kişi</td>
+                        <td class="py-2.5 px-3 text-right text-slate-500 ${isHighlighted ? 'text-teal-dark font-bold' : ''}">${b.pct}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Kullanıcı Notuna Göre Tüm Hesaplamaları Güncelle
+        function updateDashboard(rawScore) {
+            // Sınırlandırma (1 - 100)
+            let score = parseInt(rawScore, 10);
+            if (isNaN(score)) score = 1;
+            if (score < 1) score = 1;
+            if (score > 100) score = 100;
+
+            // 1. Ortalamaya Fark
+            const diff = score - CLASS_MEAN;
+            const formattedDiff = (diff >= 0 ? '+' : '') + diff.toFixed(2).replace('.', ',');
+            resDiff.textContent = formattedDiff;
+            resDiff.className = `text-base sm:text-lg font-extrabold ${diff >= 0 ? 'text-teal' : 'text-rose-600'}`;
+
+            // 2. Yüzdelik Dilim (Geride bırakılan öğrenci oranı)
+            const strictlyBelow = scoresData.filter(s => s < score).length;
+            const percentile = ((strictlyBelow / TOTAL_STUDENTS) * 100).toFixed(1).replace('.', ',');
+            resPercentile.textContent = `%${percentile}`;
+
+            // 3. Yaklaşık Sıra (Kendinden yüksek alanların sayısı + 1)
+            const strictlyAbove = scoresData.filter(s => s > score).length;
+            const rank = Math.min(strictlyAbove + 1, TOTAL_STUDENTS);
+            resRank.textContent = `${rank} / ${TOTAL_STUDENTS}`;
+
+            // 4. Bant Belirleme ve Geri Bildirim Mesajı
+            let bandTitle = '';
+            let badgeClass = '';
+            let boxClass = '';
+            let feedback = '';
+
+            if (score >= 56) {
+                bandTitle = 'Üst Dilim (56+ Puan — Ortalamanın +1 SD Üzeri)';
+                badgeClass = 'bg-emerald-600 text-white';
+                boxClass = 'bg-emerald-50 border-emerald-200';
+                feedback = 'Tebrikler! Sınıf ortalamasının en az 1 standart sapma üzerindesin. Bağıl değerlendirme (çan eğrisi) açısından en avantajlı üst dilimde yer alıyorsun.';
+            } else if (score >= 23 && score <= 51) {
+                bandTitle = 'Sınıfın Ana Gövdesi (23–51 Puan — Ortadaki %50)';
+                badgeClass = 'bg-teal text-white';
+                boxClass = 'bg-teal/10 border-teal/25';
+                feedback = score >= CLASS_MEAN 
+                    ? 'Sınıf ortalamasının üzerinde ve tipik ana gövdedesin. Finalde düzenli bir çalışmayla kolayca üst dilime (56+) çıkabilirsin.'
+                    : 'Sınıfın ortadaki %50\'lik ana gövdesi içerisindesin. Ortalamaya çok yakınsın; final sınavında konuları pekiştirerek sıralamanı hızla yükseltebilirsin.';
+            } else if (score >= 18 && score <= 55) {
+                // 18-22 veya 52-55 arası (IQR dışı ama ±1 SD içi)
+                bandTitle = 'Genel Beklenti Bandı (18,26–55,58 Puan)';
+                badgeClass = 'bg-navy text-white';
+                boxClass = 'bg-navy/5 border-navy/20';
+                feedback = score > 51
+                    ? 'Çok iyi bir performans! Sınıfın en başarılı %25\'lik üst çeyreğine girdin ve +1 standart sapma sınırının hemen eşiğindesin.'
+                    : 'Sınıfın genel dağılım bandı içerisindesin ancak ortalamanın gerisinde kaldın. Final sınavına erken hazırlanarak farkı rahatlıkla kapatabilirsin.';
+            } else {
+                bandTitle = 'Geliştirilmesi Gereken Alt Dilim (18 Altı)';
+                badgeClass = 'bg-rose-600 text-white';
+                boxClass = 'bg-rose-50 border-rose-200';
+                feedback = 'Sınıfın genel dağılım bandının altında kaldın. Ders notlarını ve temel kavramları baştan gözden geçirerek final sınavında güçlü bir telafi hedeflemelisin.';
+            }
+
+            // Genel Beklenti Bandı (18,26 - 55,58) etiketi
+            const inExpectationBand = score >= 19 && score <= 55;
+            resExpectationTag.textContent = inExpectationBand 
+                ? 'Genel Beklenti Bandı İçinde (18,26–55,58)' 
+                : (score > 55 ? 'Beklenti Bandının Üzerinde' : 'Beklenti Bandının Altında');
+
+            resBandBadge.textContent = bandTitle;
+            resBandBadge.className = `inline-block px-2.5 py-0.5 rounded-md text-xs font-bold ${badgeClass}`;
+            resFeedbackBox.className = `rounded-xl p-3.5 border transition-colors duration-200 ${boxClass}`;
+            resFeedbackText.textContent = feedback;
+
+            // 5. Grafik ve Tabloda İlgili Aralığı Vurgula
+            const activeBracketIndex = brackets.findIndex(b => score >= b.min && score <= b.max);
+            if (activeBracketIndex !== -1) {
+                chartHighlightPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-teal"></span> Senin Aralığın: ${brackets[activeBracketIndex].label}`;
+                
+                if (distributionChart) {
+                    distributionChart.data.datasets[0].backgroundColor = brackets.map((_, idx) => 
+                        idx === activeBracketIndex ? '#0D9488' : '#CBD5E1'
+                    );
+                    distributionChart.update('none');
+                }
+                renderTable(activeBracketIndex);
+            }
+        }
+
+        // Input ve Slider Senkronizasyonu
+        scoreSlider.addEventListener('input', (e) => {
+            scoreInput.value = e.target.value;
+            updateDashboard(e.target.value);
+        });
+
+        scoreInput.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value, 10);
+            if (!isNaN(val)) {
+                if (val > 100) { val = 100; scoreInput.value = 100; }
+                if (val >= 1) {
+                    scoreSlider.value = val;
+                    updateDashboard(val);
+                }
+            }
+        });
+
+        scoreInput.addEventListener('blur', (e) => {
+            let val = parseInt(e.target.value, 10);
+            if (isNaN(val) || val < 1) {
+                scoreInput.value = 1;
+                scoreSlider.value = 1;
+                updateDashboard(1);
+            }
+        });
+
+        // Sekme (Tab) Geçiş Mantığı
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-tab');
+
+                // Buton stillerini güncelle
+                tabButtons.forEach(b => {
+                    b.setAttribute('aria-selected', 'false');
+                    b.className = 'tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-navy transition-all';
+                });
+                btn.setAttribute('aria-selected', 'true');
+                btn.className = 'tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold text-navy bg-white shadow-xs transition-all';
+
+                // Panelleri göster/gizle
+                tabPanels.forEach(panel => {
+                    if (panel.id === targetId) {
+                        panel.classList.remove('hidden');
+                    } else {
+                        panel.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Sayfa Yüklendiğinde Başlat
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            updateDashboard(45);
+        });
+    </script>
+</body>
+</html>
